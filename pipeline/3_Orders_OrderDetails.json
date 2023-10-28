@@ -1,0 +1,22 @@
+{
+	"name": "3_Orders_OrderDetails",
+	"properties": {
+		"activities": [
+			{
+				"name": "Wait1",
+				"type": "Wait",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": 3600
+				}
+			}
+		],
+		"folder": {
+			"name": "ProcessingData"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-10-26T14:33:05Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

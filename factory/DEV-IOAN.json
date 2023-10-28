@@ -1,0 +1,9 @@
+{
+	"name": "DEV-IOAN",
+	"location": "westeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "9f8da311-7ffb-4a4f-81ed-2b6d5d051180",
+		"tenantId": "242fa702-c7e3-4573-afd3-e549e6ac99c2"
+	}
+}
