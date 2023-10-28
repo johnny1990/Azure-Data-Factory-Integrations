@@ -28,7 +28,7 @@
 						"dependsOn": [],
 						"userProperties": [],
 						"typeProperties": {
-							"waitTimeInSeconds": 3600
+							"waitTimeInSeconds": 1
 						}
 					}
 				],
@@ -55,7 +55,7 @@
 						"dependsOn": [],
 						"userProperties": [],
 						"typeProperties": {
-							"waitTimeInSeconds": 3600
+							"waitTimeInSeconds": 1
 						}
 					}
 				],
@@ -779,7 +779,7 @@
 							"scripts": [
 								{
 									"type": "Query",
-									"text": "INSERT INTO [dbo].[PackageExecutionStatusHistory]\n           ([PackageName]\n           ,[DateTime]\n           ,[ExecutedSuccesfully])\n     VALUES\n           ('Main_Package'\n           ,CURRENT_TIMESTAMP\n           ,1)\n"
+									"text": "INSERT INTO [dbo].[PackageExecutionStatusHistory]\n           ([PackageName]\n           ,[DateTime]\n           ,[ExecutedSuccesfully])\n     VALUES\n           ('Main_Pipeline'\n           ,CURRENT_TIMESTAMP\n           ,1)\n"
 								}
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
