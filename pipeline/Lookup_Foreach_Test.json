@@ -1,0 +1,21 @@
+{
+	"name": "Lookup_Foreach_Test",
+	"properties": {
+		"activities": [
+			{
+				"name": "Wait1",
+				"description": "--Lookup source\n--Foreach pe lookup \ninside activity copy data",
+				"type": "Wait",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": 1
+				}
+			}
+		],
+		"folder": {
+			"name": "Tutorials"
+		},
+		"annotations": []
+	}
+}
