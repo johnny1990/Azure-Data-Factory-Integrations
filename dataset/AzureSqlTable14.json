@@ -1,0 +1,43 @@
+{
+	"name": "AzureSqlTable14",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "OrderID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProductID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "UnitPrice",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "Quantity",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "Discount",
+				"type": "real",
+				"precision": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Order Details"
+		}
+	}
+}
