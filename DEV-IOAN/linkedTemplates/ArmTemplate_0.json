@@ -773,6 +773,143 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable13')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "OrderID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CustomerID",
+						"type": "nchar"
+					},
+					{
+						"name": "EmployeeID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "OrderDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "RequiredDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "ShippedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "ShipVia",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Freight",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "ShipName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ShipAddress",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ShipCity",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ShipRegion",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ShipPostalCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ShipCountry",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Orders"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable14')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "OrderID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "UnitPrice",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "Quantity",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "Discount",
+						"type": "real",
+						"precision": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Order Details"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/1_Products')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1410,7 +1547,14 @@
 					{
 						"name": "Processing Orders_Order_details",
 						"type": "Script",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Move Order Details from Default to processing database",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -1848,6 +1992,109 @@
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
 						}
+					},
+					{
+						"name": "Move Orders from Default to processing database",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzureSqlTable13",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSqlTable7",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Move Order Details from Default to processing database",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Move Orders from Default to processing database",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "AzureSqlTable14",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureSqlTable9",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"policy": {
@@ -1864,7 +2111,9 @@
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable7')]",
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable8')]",
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable9')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqlTable10')]"
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable10')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable13')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable14')]"
 			]
 		},
 		{
@@ -2182,151 +2431,6 @@
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable2')]",
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MainPipeline')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Truncate tables",
-						"type": "Script",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase1",
-							"type": "LinkedServiceReference"
-						},
-						"typeProperties": {
-							"scripts": [
-								{
-									"type": "Query",
-									"text": "exec sp_TruncateTables"
-								}
-							],
-							"scriptBlockExecutionTimeout": "02:00:00"
-						}
-					},
-					{
-						"name": "Execute Products Pipeline",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Truncate tables",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "1_Products",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "Execute Suppliers Pipeline",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Execute Products Pipeline",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "2_Suppliers",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "Execute Order Orders Details Pipeline",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Execute Suppliers Pipeline",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "3_Orders_OrderDetails",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "PackageExecutionStatusHistory",
-						"type": "Script",
-						"dependsOn": [
-							{
-								"activity": "Execute Order Orders Details Pipeline",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase1",
-							"type": "LinkedServiceReference"
-						},
-						"typeProperties": {
-							"scripts": [
-								{
-									"type": "Query",
-									"text": "INSERT INTO [dbo].[PackageExecutionStatusHistory]\n           ([PackageName]\n           ,[DateTime]\n           ,[ExecutedSuccesfully])\n     VALUES\n           ('Main_Pipeline'\n           ,CURRENT_TIMESTAMP\n           ,1)\n"
-								}
-							],
-							"scriptBlockExecutionTimeout": "02:00:00"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"folder": {
-					"name": "ProcessingData"
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-10-26T15:56:25Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]",
-				"[concat(variables('factoryId'), '/pipelines/1_Products')]",
-				"[concat(variables('factoryId'), '/pipelines/2_Suppliers')]",
-				"[concat(variables('factoryId'), '/pipelines/3_Orders_OrderDetails')]"
 			]
 		}
 	]
