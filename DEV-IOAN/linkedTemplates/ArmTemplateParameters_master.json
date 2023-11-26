@@ -8,6 +8,9 @@
 		"AzureSqlDatabase1_connectionString": {
 			"value": ""
 		},
+		"BLOBService_connectionString": {
+			"value": ""
+		},
 		"containerUri": {
 			"value": ""
 		},
