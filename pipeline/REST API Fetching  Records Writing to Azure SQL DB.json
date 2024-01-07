@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "select * from Employees",
+						"sqlReaderQuery": "select * from EmployeeTest",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -25,7 +25,7 @@
 						"referenceName": "AzureSqlTable15",
 						"type": "DatasetReference"
 					},
-					"firstRowOnly": true
+					"firstRowOnly": false
 				}
 			},
 			{
