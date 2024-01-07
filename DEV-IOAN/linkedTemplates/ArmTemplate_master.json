@@ -21,7 +21,7 @@
 		},
 		"RestService1_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "http://dummy.restapiexample.com/api/v1/employee"
+			"defaultValue": "http://dummy.restapiexample.com/api/v1/employee/"
 		},
 		"containerUri": {
 			"type": "string",

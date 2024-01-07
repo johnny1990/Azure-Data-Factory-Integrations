@@ -21,7 +21,7 @@
 		},
 		"RestService1_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "http://dummy.restapiexample.com/api/v1/employee"
+			"defaultValue": "http://dummy.restapiexample.com/api/v1/employee/"
 		}
 	},
 	"variables": {
@@ -1674,9 +1674,56 @@
 										"sink": {
 											"type": "AzureSqlSink",
 											"writeBehavior": "insert",
-											"sqlWriterUseTableLock": false
+											"sqlWriterUseTableLock": false,
+											"tableOption": "autoCreate",
+											"disableMetricsCollection": false
 										},
-										"enableStaging": false
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"mappings": [
+												{
+													"source": {
+														"path": "$['data']['id']"
+													},
+													"sink": {
+														"name": "id"
+													}
+												},
+												{
+													"source": {
+														"path": "$['data']['employee_name']"
+													},
+													"sink": {
+														"name": "employee_name"
+													}
+												},
+												{
+													"source": {
+														"path": "$['data']['employee_salary']"
+													},
+													"sink": {
+														"name": "employee_salary"
+													}
+												},
+												{
+													"source": {
+														"path": "$['data']['employee_age']"
+													},
+													"sink": {
+														"name": "employee_age"
+													}
+												},
+												{
+													"source": {
+														"path": "$['data']['profile_image']"
+													},
+													"sink": {
+														"name": "profile_image"
+													}
+												}
+											]
+										}
 									},
 									"inputs": [
 										{
