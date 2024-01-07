@@ -13,6 +13,9 @@
 		},
 		"BLOBService_connectionString": {
 			"value": ""
+		},
+		"RestService1_properties_typeProperties_url": {
+			"value": "http://dummy.restapiexample.com/api/v1"
 		}
 	}
 }
