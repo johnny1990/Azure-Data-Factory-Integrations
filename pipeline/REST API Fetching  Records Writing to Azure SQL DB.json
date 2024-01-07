@@ -81,14 +81,6 @@
 									"mappings": [
 										{
 											"source": {
-												"path": "$['status']"
-											},
-											"sink": {
-												"name": "status"
-											}
-										},
-										{
-											"source": {
 												"path": "$['data']['id']"
 											},
 											"sink": {
@@ -125,14 +117,6 @@
 											},
 											"sink": {
 												"name": "profile_image"
-											}
-										},
-										{
-											"source": {
-												"path": "$['message']"
-											},
-											"sink": {
-												"name": "message"
 											}
 										}
 									]
