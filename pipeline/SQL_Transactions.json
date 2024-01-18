@@ -1,0 +1,124 @@
+{
+	"name": "SQL_Transactions",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get last archieved date",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase2",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "DECLARE @LastArchiveDate DATETIME = '2018-01-01'\nSELECT @LastArchiveDate = [LastArchiveOrderDate] FROM [dbo].[ArchiveConfig] WHERE [TableName] = 'SalesOrder'\nSELECT DATEADD(DAY,1,@LastArchiveDate) AS LastArchiveDate"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Create Temporary Table Temp_SalesOrder",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Get last archieved date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase2",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "DROP TABLE IF EXISTS Temp_SalesOrder\nGO\nCREATE TABLE Temp_SalesOrder\n(\n  SaleOrderId INT NOT NULL,\n  CustomerId INT NOT NULL,\n  SalesPersonId INT NOT NULL,\n  OrderDate DATE NOT NULL,\n  TaxAmt MONEY NOT NULL,\n  TotalDue MONEY NOT NULL\n)\nGO"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Insert data into Archieve table",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Create Temporary Table Temp_SalesOrder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT\n  [SaleOrderId],\n  [CustomerId],\n  [SalesPersonId],\n  [OrderDate],\n  [TaxAmt],\n  [TotalDue]\nFROM\n  [dbo].[SalesOrder]\nWHERE\n  [OrderDate] = ?",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "AzureSqlTable17_2",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AzureSqlTable18_2",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "Transactions"
+		},
+		"annotations": []
+	}
+}
