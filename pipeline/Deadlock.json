@@ -1,0 +1,136 @@
+{
+	"name": "Deadlock",
+	"properties": {
+		"activities": [
+			{
+				"name": "Enable tracing",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "DBCC TRACEON (1222, 1204, -1)"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Create tables  insert few records",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Enable tracing",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "-- Create a Sample Tables --\nDROP TABLE IF EXISTS SampleDeadLock_1\n\nGO\nCREATE TABLE SampleDeadLock_1(\n    Item_Code    INT\n    ,Item_Desc    VARCHAR(100)\n    ,Qty        INT\n)\n\nDROP TABLE IF EXISTS SampleDeadLock_2\nGO\n\nCREATE TABLE SampleDeadLock_2(\n    Item_Code    INT\n    ,Item_Desc    VARCHAR(100)\n    ,Qty        INT\n)\n\n-- Insert couple of records to each table --\n\nINSERT INTO dbo.SampleDeadLock_1(\n    Item_Code\n    ,Item_Desc\n    ,Qty\n)\nVALUES\n    (1,'CPU', 10)\n    ,(2, '20 GB - Hard Disk', 20)\n\nINSERT INTO dbo.SampleDeadLock_2(\n    Item_Code\n    ,Item_Desc\n    ,Qty\n)\nVALUES\n    (3,'Monitor', 15)\n    ,(4, 'Keyboard & Mouse', 25)"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Operation 1",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Create tables  insert few records",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "BEGIN TRAN\nUPDATE dbo.SampleDeadLock_1 SET Qty = 100 WHERE Item_Code = 1\nWAITFOR DELAY '00:00:30'\nUPDATE dbo.SampleDeadLock_2 SET Qty = 200 WHERE Item_Code = 3"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Operation 2",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Operation 1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "BEGIN TRAN\n\nWAITFOR DELAY '00:00:10'\n\nUPDATE dbo.SampleDeadLock_2 SET Qty = 300 WHERE Item_Code = 3\nUPDATE dbo.SampleDeadLock_1 SET Qty = 400 WHERE Item_Code = 1"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"folder": {
+			"name": "Deadlock SQL Server"
+		},
+		"annotations": []
+	}
+}
