@@ -3407,7 +3407,7 @@
 							"scripts": [
 								{
 									"type": "Query",
-									"text": "DROP TABLE IF EXISTS Temp_SalesOrder\nGO\nCREATE TABLE Temp_SalesOrder\n(\n  SaleOrderId INT NOT NULL,\n  CustomerId INT NOT NULL,\n  SalesPersonId INT NOT NULL,\n  OrderDate DATE NOT NULL,\n  TaxAmt MONEY NOT NULL,\n  TotalDue MONEY NOT NULL\n)\nGO"
+									"text": "DROP TABLE IF EXISTS Temp_SalesOrder\n\nCREATE TABLE Temp_SalesOrder\n(\n  SaleOrderId INT NOT NULL,\n  CustomerId INT NOT NULL,\n  SalesPersonId INT NOT NULL,\n  OrderDate DATE NOT NULL,\n  TaxAmt MONEY NOT NULL,\n  TotalDue MONEY NOT NULL\n)\n"
 								}
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
@@ -3435,7 +3435,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT\n  [SaleOrderId],\n  [CustomerId],\n  [SalesPersonId],\n  [OrderDate],\n  [TaxAmt],\n  [TotalDue]\nFROM\n  [dbo].[SalesOrder]\nWHERE\n  [OrderDate] = ?",
+								"sqlReaderQuery": "SELECT\n  [SaleOrderId],\n  [CustomerId],\n  [SalesPersonId],\n  [OrderDate],\n  [TaxAmt],\n  [TotalDue]\nFROM\n  [dbo].[SalesOrder]\n--WHERE\n --[OrderDate] = ?",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -3496,7 +3496,7 @@
 							"scripts": [
 								{
 									"type": "Query",
-									"text": "DELETE FROM [dbo].[SalesOrder] WHERE [OrderDate] = ?"
+									"text": "DELETE FROM [dbo].[SalesOrder] --WHERE [OrderDate] = ?"
 								}
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
@@ -3529,7 +3529,7 @@
 							"scripts": [
 								{
 									"type": "Query",
-									"text": "UPDATE [dbo].[ArchiveConfig] SET [LastArchiveOrderDate] = ? WHERE [TableName]='SalesOrder'"
+									"text": "UPDATE [dbo].[ArchiveConfig] SET [LastArchiveOrderDate] = '' WHERE [TableName]='SalesOrder'"
 								}
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
