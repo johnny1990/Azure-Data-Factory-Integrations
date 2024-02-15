@@ -1,0 +1,12 @@
+{
+	"name": "CallRestApi",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MarketStackApi",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"schema": []
+	}
+}

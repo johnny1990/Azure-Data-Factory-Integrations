@@ -3,10 +3,8 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Web1",
+				"name": "GetAPIKey",
 				"type": "WebActivity",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -15,9 +13,49 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "https://%7byourkeyvaultname%7d.vault.azure.net/secrets/%7bsecret-name%7d/%7bsecret-version%7d?api-version=7.3",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net/"
+					}
+				}
+			},
+			{
+				"name": "Set APIKey value",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "GetAPIKey",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "APIKey",
+					"value": {
+						"value": "@activity('GetAPIKey').output.value",
+						"type": "Expression"
+					}
+				}
 			}
 		],
+		"variables": {
+			"APIKey": {
+				"type": "String"
+			}
+		},
 		"folder": {
 			"name": "Tutorials/CallRestApi"
 		},
