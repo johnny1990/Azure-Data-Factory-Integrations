@@ -15,17 +15,21 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
 		},
-		"BLOBService_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'BLOBService'"
-		},
 		"AzureSqlDatabase2_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase2'"
 		},
+		"BLOBService_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'BLOBService'"
+		},
 		"RestService1_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "http://dummy.restapiexample.com/api/v1/employee/"
+		},
+		"MarketStackApi_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "http://api.marketstack.com/v1/"
 		},
 		"containerUri": {
 			"type": "string",
@@ -60,14 +64,17 @@
 					"AzureSqlDatabase1_connectionString": {
 						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
 					},
-					"BLOBService_connectionString": {
-						"value": "[parameters('BLOBService_connectionString')]"
-					},
 					"AzureSqlDatabase2_connectionString": {
 						"value": "[parameters('AzureSqlDatabase2_connectionString')]"
 					},
+					"BLOBService_connectionString": {
+						"value": "[parameters('BLOBService_connectionString')]"
+					},
 					"RestService1_properties_typeProperties_url": {
 						"value": "[parameters('RestService1_properties_typeProperties_url')]"
+					},
+					"MarketStackApi_properties_typeProperties_url": {
+						"value": "[parameters('MarketStackApi_properties_typeProperties_url')]"
 					}
 				}
 			},

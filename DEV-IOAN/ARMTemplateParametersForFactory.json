@@ -11,14 +11,17 @@
 		"AzureSqlDatabase1_connectionString": {
 			"value": ""
 		},
-		"BLOBService_connectionString": {
+		"AzureSqlDatabase2_connectionString": {
 			"value": ""
 		},
-		"AzureSqlDatabase2_connectionString": {
+		"BLOBService_connectionString": {
 			"value": ""
 		},
 		"RestService1_properties_typeProperties_url": {
 			"value": "http://dummy.restapiexample.com/api/v1/employee/"
+		},
+		"MarketStackApi_properties_typeProperties_url": {
+			"value": "http://api.marketstack.com/v1/"
 		}
 	}
 }
