@@ -15,14 +15,14 @@
 				},
 				"userProperties": [],
 				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase2",
+					"referenceName": "AzureSqlDatabase1",
 					"type": "LinkedServiceReference"
 				},
 				"typeProperties": {
 					"scripts": [
 						{
 							"type": "Query",
-							"text": "DECLARE @LastArchiveDate DATETIME = '2018-01-01'\nSELECT @LastArchiveDate = [LastArchiveOrderDate] FROM [dbo].[ArchiveConfig] WHERE [TableName] = 'SalesOrder'\nSELECT DATEADD(DAY,1,@LastArchiveDate) AS LastArchiveDate"
+							"text": "DECLARE @LastArchiveDate DATETIME = '2018-01-01'\nSELECT @LastArchiveDate = [LastArchiveOrderDate] FROM [dbo].[Transactions_ArchiveConfig] WHERE [TableName] = 'Transactions_SalesOrder'\nSELECT DATEADD(DAY,1,@LastArchiveDate) AS LastArchiveDate"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
@@ -48,14 +48,14 @@
 				},
 				"userProperties": [],
 				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase2",
+					"referenceName": "AzureSqlDatabase1",
 					"type": "LinkedServiceReference"
 				},
 				"typeProperties": {
 					"scripts": [
 						{
 							"type": "Query",
-							"text": "DROP TABLE IF EXISTS Temp_SalesOrder\n\nCREATE TABLE Temp_SalesOrder\n(\n  SaleOrderId INT NOT NULL,\n  CustomerId INT NOT NULL,\n  SalesPersonId INT NOT NULL,\n  OrderDate DATE NOT NULL,\n  TaxAmt MONEY NOT NULL,\n  TotalDue MONEY NOT NULL\n)\n"
+							"text": "DROP TABLE IF EXISTS Transactions_Temp_SalesOrder\n\nCREATE TABLE Transactions_Temp_SalesOrder\n(\n  SaleOrderId INT NOT NULL,\n  CustomerId INT NOT NULL,\n  SalesPersonId INT NOT NULL,\n  OrderDate DATE NOT NULL,\n  TaxAmt MONEY NOT NULL,\n  TotalDue MONEY NOT NULL\n)\n"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
@@ -83,7 +83,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT\n  [SaleOrderId],\n  [CustomerId],\n  [SalesPersonId],\n  [OrderDate],\n  [TaxAmt],\n  [TotalDue]\nFROM\n  [dbo].[SalesOrder]\n--WHERE\n --[OrderDate] = ?",
+						"sqlReaderQuery": "SELECT\n  [SaleOrderId],\n  [CustomerId],\n  [SalesPersonId],\n  [OrderDate],\n  [TaxAmt],\n  [TotalDue]\nFROM\n  [dbo].[Transactions_SalesOrder]\n--WHERE\n --[OrderDate] = ?",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -135,14 +135,14 @@
 				},
 				"userProperties": [],
 				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase2",
+					"referenceName": "AzureSqlDatabase1",
 					"type": "LinkedServiceReference"
 				},
 				"typeProperties": {
 					"scripts": [
 						{
 							"type": "Query",
-							"text": "DELETE FROM [dbo].[SalesOrder] --WHERE [OrderDate] = ?"
+							"text": "DELETE FROM [dbo].[Transactions_SalesOrder] --WHERE [OrderDate] = ?"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
@@ -168,14 +168,14 @@
 				},
 				"userProperties": [],
 				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase2",
+					"referenceName": "AzureSqlDatabase1",
 					"type": "LinkedServiceReference"
 				},
 				"typeProperties": {
 					"scripts": [
 						{
 							"type": "Query",
-							"text": "UPDATE [dbo].[ArchiveConfig] SET [LastArchiveOrderDate] = '' WHERE [TableName]='SalesOrder'"
+							"text": "UPDATE [dbo].[Transactions_ArchiveConfig] SET [LastArchiveOrderDate] = '' WHERE [TableName]='Transactions_SalesOrder'"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
@@ -201,14 +201,14 @@
 				},
 				"userProperties": [],
 				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase2",
+					"referenceName": "AzureSqlDatabase1",
 					"type": "LinkedServiceReference"
 				},
 				"typeProperties": {
 					"scripts": [
 						{
 							"type": "Query",
-							"text": "INSERT INTO [dbo].[PipelineExecutionLog] ([PackageName], [ExecutionTime]) VALUES ('SalesOrder', GETDATE())"
+							"text": "INSERT INTO [dbo].[Transactions_PipelineExecutionLog] ([PackageName], [ExecutionTime]) VALUES ('Transactions_SalesOrder', GETDATE())"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
