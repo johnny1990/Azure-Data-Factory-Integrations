@@ -23,13 +23,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'BLOBService'"
 		},
-		"RestService1_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "http://dummy.restapiexample.com/api/v1/employee/"
-		},
 		"MarketStackApi_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "http://api.marketstack.com/v1/"
+		},
+		"RestService1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "http://dummy.restapiexample.com/api/v1/employee/"
 		},
 		"containerUri": {
 			"type": "string",
@@ -70,11 +70,11 @@
 					"BLOBService_connectionString": {
 						"value": "[parameters('BLOBService_connectionString')]"
 					},
-					"RestService1_properties_typeProperties_url": {
-						"value": "[parameters('RestService1_properties_typeProperties_url')]"
-					},
 					"MarketStackApi_properties_typeProperties_url": {
 						"value": "[parameters('MarketStackApi_properties_typeProperties_url')]"
+					},
+					"RestService1_properties_typeProperties_url": {
+						"value": "[parameters('RestService1_properties_typeProperties_url')]"
 					}
 				}
 			},

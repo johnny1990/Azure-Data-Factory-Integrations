@@ -23,13 +23,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'BLOBService'"
 		},
-		"RestService1_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "http://dummy.restapiexample.com/api/v1/employee/"
-		},
 		"MarketStackApi_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "http://api.marketstack.com/v1/"
+		},
+		"RestService1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "http://dummy.restapiexample.com/api/v1/employee/"
 		}
 	},
 	"variables": {
@@ -1946,14 +1946,14 @@
 						},
 						"userProperties": [],
 						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase2",
+							"referenceName": "AzureSqlDatabase1",
 							"type": "LinkedServiceReference"
 						},
 						"typeProperties": {
 							"scripts": [
 								{
 									"type": "Query",
-									"text": "DECLARE @LastArchiveDate DATETIME = '2018-01-01'\nSELECT @LastArchiveDate = [LastArchiveOrderDate] FROM [dbo].[ArchiveConfig] WHERE [TableName] = 'SalesOrder'\nSELECT DATEADD(DAY,1,@LastArchiveDate) AS LastArchiveDate"
+									"text": "DECLARE @LastArchiveDate DATETIME = '2018-01-01'\nSELECT @LastArchiveDate = [LastArchiveOrderDate] FROM [dbo].[Transactions_ArchiveConfig] WHERE [TableName] = 'Transactions_SalesOrder'\nSELECT DATEADD(DAY,1,@LastArchiveDate) AS LastArchiveDate"
 								}
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
@@ -1979,14 +1979,14 @@
 						},
 						"userProperties": [],
 						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase2",
+							"referenceName": "AzureSqlDatabase1",
 							"type": "LinkedServiceReference"
 						},
 						"typeProperties": {
 							"scripts": [
 								{
 									"type": "Query",
-									"text": "DROP TABLE IF EXISTS Temp_SalesOrder\n\nCREATE TABLE Temp_SalesOrder\n(\n  SaleOrderId INT NOT NULL,\n  CustomerId INT NOT NULL,\n  SalesPersonId INT NOT NULL,\n  OrderDate DATE NOT NULL,\n  TaxAmt MONEY NOT NULL,\n  TotalDue MONEY NOT NULL\n)\n"
+									"text": "DROP TABLE IF EXISTS Transactions_Temp_SalesOrder\n\nCREATE TABLE Transactions_Temp_SalesOrder\n(\n  SaleOrderId INT NOT NULL,\n  CustomerId INT NOT NULL,\n  SalesPersonId INT NOT NULL,\n  OrderDate DATE NOT NULL,\n  TaxAmt MONEY NOT NULL,\n  TotalDue MONEY NOT NULL\n)\n"
 								}
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
@@ -2014,7 +2014,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT\n  [SaleOrderId],\n  [CustomerId],\n  [SalesPersonId],\n  [OrderDate],\n  [TaxAmt],\n  [TotalDue]\nFROM\n  [dbo].[SalesOrder]\n--WHERE\n --[OrderDate] = ?",
+								"sqlReaderQuery": "SELECT\n  [SaleOrderId],\n  [CustomerId],\n  [SalesPersonId],\n  [OrderDate],\n  [TaxAmt],\n  [TotalDue]\nFROM\n  [dbo].[Transactions_SalesOrder]\n--WHERE\n --[OrderDate] = ?",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -2068,14 +2068,14 @@
 						},
 						"userProperties": [],
 						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase2",
+							"referenceName": "AzureSqlDatabase1",
 							"type": "LinkedServiceReference"
 						},
 						"typeProperties": {
 							"scripts": [
 								{
 									"type": "Query",
-									"text": "DELETE FROM [dbo].[SalesOrder] --WHERE [OrderDate] = ?"
+									"text": "DELETE FROM [dbo].[Transactions_SalesOrder] --WHERE [OrderDate] = ?"
 								}
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
@@ -2101,14 +2101,14 @@
 						},
 						"userProperties": [],
 						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase2",
+							"referenceName": "AzureSqlDatabase1",
 							"type": "LinkedServiceReference"
 						},
 						"typeProperties": {
 							"scripts": [
 								{
 									"type": "Query",
-									"text": "UPDATE [dbo].[ArchiveConfig] SET [LastArchiveOrderDate] = '' WHERE [TableName]='SalesOrder'"
+									"text": "UPDATE [dbo].[Transactions_ArchiveConfig] SET [LastArchiveOrderDate] = '' WHERE [TableName]='Transactions_SalesOrder'"
 								}
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
@@ -2134,14 +2134,14 @@
 						},
 						"userProperties": [],
 						"linkedServiceName": {
-							"referenceName": "AzureSqlDatabase2",
+							"referenceName": "AzureSqlDatabase1",
 							"type": "LinkedServiceReference"
 						},
 						"typeProperties": {
 							"scripts": [
 								{
 									"type": "Query",
-									"text": "INSERT INTO [dbo].[PipelineExecutionLog] ([PackageName], [ExecutionTime]) VALUES ('SalesOrder', GETDATE())"
+									"text": "INSERT INTO [dbo].[Transactions_PipelineExecutionLog] ([PackageName], [ExecutionTime]) VALUES ('Transactions_SalesOrder', GETDATE())"
 								}
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
@@ -2157,7 +2157,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase2')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]",
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable17_2')]",
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable18_2')]"
 			]
@@ -3474,6 +3474,21 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/MarketStackApi')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('MarketStackApi_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/RestService1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -3650,21 +3665,6 @@
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]",
 				"[concat(variables('factoryId'), '/linkedServices/BLOBService')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MarketStackApi')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "RestService",
-				"typeProperties": {
-					"url": "[parameters('MarketStackApi_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": true,
-					"authenticationType": "Anonymous"
-				}
-			},
-			"dependsOn": []
 		}
 	]
 }
