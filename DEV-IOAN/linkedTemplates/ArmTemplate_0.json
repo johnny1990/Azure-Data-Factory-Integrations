@@ -155,6 +155,36 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/WriteJsonDataToAzureBlobStorage')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Tutorials/Write Json Data to Azure Blob Storage"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Deadlock')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -717,76 +747,6 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "SalesOrder_Archive"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlTable2')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "ProductID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ProductName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SupplierID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CategoryID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "QuantityPerUnit",
-						"type": "nvarchar"
-					},
-					{
-						"name": "UnitPrice",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "UnitsInStock",
-						"type": "smallint",
-						"precision": 5
-					},
-					{
-						"name": "UnitsOnOrder",
-						"type": "smallint",
-						"precision": 5
-					},
-					{
-						"name": "ReorderLevel",
-						"type": "smallint",
-						"precision": 5
-					},
-					{
-						"name": "Discontinued",
-						"type": "bit"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Products"
 				}
 			},
 			"dependsOn": [
