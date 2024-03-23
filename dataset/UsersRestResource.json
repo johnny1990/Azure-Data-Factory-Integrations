@@ -1,0 +1,12 @@
+{
+	"name": "UsersRestResource",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RestServiceUsers",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"schema": []
+	}
+}
