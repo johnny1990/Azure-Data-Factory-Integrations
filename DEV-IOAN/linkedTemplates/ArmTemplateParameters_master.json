@@ -17,11 +17,17 @@
 		"BLOBService_connectionString": {
 			"value": ""
 		},
+		"AzureBlobStorage2_connectionString": {
+			"value": ""
+		},
 		"MarketStackApi_properties_typeProperties_url": {
 			"value": "http://api.marketstack.com/v1/"
 		},
 		"RestService1_properties_typeProperties_url": {
 			"value": "http://dummy.restapiexample.com/api/v1/employee/"
+		},
+		"RestServiceUsers_properties_typeProperties_url": {
+			"value": "https://jsonplaceholder.typicode.com/users"
 		},
 		"containerUri": {
 			"value": ""

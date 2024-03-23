@@ -23,6 +23,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'BLOBService'"
 		},
+		"AzureBlobStorage2_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage2'"
+		},
 		"MarketStackApi_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "http://api.marketstack.com/v1/"
@@ -30,6 +34,10 @@
 		"RestService1_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "http://dummy.restapiexample.com/api/v1/employee/"
+		},
+		"RestServiceUsers_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://jsonplaceholder.typicode.com/users"
 		},
 		"containerUri": {
 			"type": "string",
@@ -70,11 +78,17 @@
 					"BLOBService_connectionString": {
 						"value": "[parameters('BLOBService_connectionString')]"
 					},
+					"AzureBlobStorage2_connectionString": {
+						"value": "[parameters('AzureBlobStorage2_connectionString')]"
+					},
 					"MarketStackApi_properties_typeProperties_url": {
 						"value": "[parameters('MarketStackApi_properties_typeProperties_url')]"
 					},
 					"RestService1_properties_typeProperties_url": {
 						"value": "[parameters('RestService1_properties_typeProperties_url')]"
+					},
+					"RestServiceUsers_properties_typeProperties_url": {
+						"value": "[parameters('RestServiceUsers_properties_typeProperties_url')]"
 					}
 				}
 			},
@@ -98,6 +112,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'DEV-IOAN_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "DEV-IOAN_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'DEV-IOAN_ArmTemplate_1')]"
 			]
 		}
 	]
