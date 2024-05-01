@@ -1,0 +1,50 @@
+{
+	"name": "IF_Condition",
+	"properties": {
+		"activities": [
+			{
+				"name": "If Condition",
+				"type": "IfCondition",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@contains(pipeline().parameters.pfile, 'customer')",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "False Wait",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 1
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "True Wait",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 1
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"pfile": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Tutorials"
+		},
+		"annotations": []
+	}
+}
