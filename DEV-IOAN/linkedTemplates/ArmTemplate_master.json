@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
 		},
+		"AzureBlobStorage2_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage2'"
+		},
 		"AzureSqlDatabase1_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
@@ -22,10 +26,6 @@
 		"BLOBService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'BLOBService'"
-		},
-		"AzureBlobStorage2_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage2'"
 		},
 		"MarketStackApi_properties_typeProperties_url": {
 			"type": "string",
@@ -69,6 +69,9 @@
 					"AzureBlobStorage1_connectionString": {
 						"value": "[parameters('AzureBlobStorage1_connectionString')]"
 					},
+					"AzureBlobStorage2_connectionString": {
+						"value": "[parameters('AzureBlobStorage2_connectionString')]"
+					},
 					"AzureSqlDatabase1_connectionString": {
 						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
 					},
@@ -77,9 +80,6 @@
 					},
 					"BLOBService_connectionString": {
 						"value": "[parameters('BLOBService_connectionString')]"
-					},
-					"AzureBlobStorage2_connectionString": {
-						"value": "[parameters('AzureBlobStorage2_connectionString')]"
 					},
 					"MarketStackApi_properties_typeProperties_url": {
 						"value": "[parameters('MarketStackApi_properties_typeProperties_url')]"
