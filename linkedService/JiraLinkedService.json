@@ -2,7 +2,7 @@
 	"name": "JiraLinkedService",
 	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
-		"description": "Test Jira linked Service  old https://ulatlprod01.atlassian.net ",
+		"description": "Test Jira linked Service",
 		"annotations": [],
 		"type": "Jira",
 		"typeProperties": {
