@@ -48,6 +48,7 @@
 				"     insertable:false,",
 				"     updateable:false,",
 				"     upsertable:true,",
+				"     keys:['1'],",
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
