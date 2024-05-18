@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "AzureSq_lDestination",
+						"referenceName": "AzureSql_Destination",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"

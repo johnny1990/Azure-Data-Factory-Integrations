@@ -1,5 +1,5 @@
 {
-	"name": "AzureSq_lDestination",
+	"name": "AzureSql_Destination",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureSqlDestination",
