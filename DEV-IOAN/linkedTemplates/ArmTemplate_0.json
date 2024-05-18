@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage2'"
 		},
+		"AzureBlobStorage_retailcontainer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage_retailcontainer'"
+		},
 		"AzureSqlDatabase1_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
@@ -27,6 +31,30 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'BLOBService'"
 		},
+		"JiraLinkedService_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'JiraLinkedService'"
+		},
+		"SalesforceLinkedService_clientSecret": {
+			"type": "secureString",
+			"metadata": "Secure string for 'clientSecret' of 'SalesforceLinkedService'"
+		},
+		"AzureSqlDestination_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDestination'"
+		},
+		"StorageSource_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'StorageSource'"
+		},
+		"JiraLinkedService_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "https://id.atlassian.com/login"
+		},
+		"JiraLinkedService_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "manioan90@gmail.com"
+		},
 		"MarketStackApi_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "http://api.marketstack.com/v1/"
@@ -38,12 +66,76 @@
 		"RestServiceUsers_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://jsonplaceholder.typicode.com/users"
+		},
+		"SalesforceLinkedService_properties_typeProperties_environmentUrl": {
+			"type": "string",
+			"defaultValue": "https://test.salesforce.com"
+		},
+		"SalesforceLinkedService_properties_typeProperties_clientId": {
+			"type": "string",
+			"defaultValue": "Ioan"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/IF_Condition')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "If Condition",
+						"type": "IfCondition",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@contains(pipeline().parameters.pfile, 'customer')",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "False Wait",
+									"type": "Wait",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"waitTimeInSeconds": 1
+									}
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "True Wait",
+									"type": "Wait",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"waitTimeInSeconds": 1
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"pfile": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Tutorials"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/WriteJsonDataToAzureBlobStorage')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -140,6 +232,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage_retailcontainer')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureBlobStorage_retailcontainer_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -174,6 +279,29 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('BLOBService_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/JiraLinkedService')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Test Jira linked Service",
+				"annotations": [],
+				"type": "Jira",
+				"typeProperties": {
+					"host": "[parameters('JiraLinkedService_properties_typeProperties_host')]",
+					"port": 443,
+					"username": "[parameters('JiraLinkedService_properties_typeProperties_username')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('JiraLinkedService_password')]"
+					},
+					"useEncryptedEndpoints": true,
+					"useHostVerification": true,
+					"usePeerVerification": true
 				}
 			},
 			"dependsOn": []
@@ -224,58 +352,49 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/IF_Condition')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/SalesforceLinkedService')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"activities": [
-					{
-						"name": "If Condition",
-						"type": "IfCondition",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@contains(pipeline().parameters.pfile, 'customer')",
-								"type": "Expression"
-							},
-							"ifFalseActivities": [
-								{
-									"name": "False Wait",
-									"type": "Wait",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"waitTimeInSeconds": 1
-									}
-								}
-							],
-							"ifTrueActivities": [
-								{
-									"name": "True Wait",
-									"type": "Wait",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"waitTimeInSeconds": 1
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"parameters": {
-					"pfile": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Tutorials"
-				},
-				"annotations": []
+				"description": "Linked Service for Salesforce testing domain!!!. To be updated with correct values.",
+				"annotations": [],
+				"type": "SalesforceV2",
+				"typeProperties": {
+					"environmentUrl": "[parameters('SalesforceLinkedService_properties_typeProperties_environmentUrl')]",
+					"clientId": "[parameters('SalesforceLinkedService_properties_typeProperties_clientId')]",
+					"clientSecret": {
+						"type": "SecureString",
+						"value": "[parameters('SalesforceLinkedService_clientSecret')]"
+					},
+					"apiVersion": "50.0",
+					"authenticationType": "OAuth2ClientCredential"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDestination')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDestination_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/StorageSource')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('StorageSource_connectionString')]"
+				}
 			},
 			"dependsOn": []
 		},
@@ -628,200 +747,6 @@
 					"schema": "dbo",
 					"table": "Suppliers"
 				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlTable13')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "OrderID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CustomerID",
-						"type": "nchar"
-					},
-					{
-						"name": "EmployeeID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "OrderDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "RequiredDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "ShippedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "ShipVia",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Freight",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "ShipName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ShipAddress",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ShipCity",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ShipRegion",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ShipPostalCode",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ShipCountry",
-						"type": "nvarchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Orders"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlTable14')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "OrderID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ProductID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "UnitPrice",
-						"type": "money",
-						"precision": 19,
-						"scale": 4
-					},
-					{
-						"name": "Quantity",
-						"type": "smallint",
-						"precision": 5
-					},
-					{
-						"name": "Discount",
-						"type": "real",
-						"precision": 7
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Order Details"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlTable15')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlTable16')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "TechbrothersdemoRest"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlTable17_2')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"

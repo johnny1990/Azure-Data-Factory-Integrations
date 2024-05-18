@@ -11,6 +11,9 @@
 		"AzureBlobStorage2_connectionString": {
 			"value": ""
 		},
+		"AzureBlobStorage_retailcontainer_connectionString": {
+			"value": ""
+		},
 		"AzureSqlDatabase1_connectionString": {
 			"value": ""
 		},
@@ -20,6 +23,24 @@
 		"BLOBService_connectionString": {
 			"value": ""
 		},
+		"JiraLinkedService_password": {
+			"value": ""
+		},
+		"SalesforceLinkedService_clientSecret": {
+			"value": ""
+		},
+		"AzureSqlDestination_connectionString": {
+			"value": ""
+		},
+		"StorageSource_connectionString": {
+			"value": ""
+		},
+		"JiraLinkedService_properties_typeProperties_host": {
+			"value": "https://id.atlassian.com/login"
+		},
+		"JiraLinkedService_properties_typeProperties_username": {
+			"value": "manioan90@gmail.com"
+		},
 		"MarketStackApi_properties_typeProperties_url": {
 			"value": "http://api.marketstack.com/v1/"
 		},
@@ -28,6 +49,12 @@
 		},
 		"RestServiceUsers_properties_typeProperties_url": {
 			"value": "https://jsonplaceholder.typicode.com/users"
+		},
+		"SalesforceLinkedService_properties_typeProperties_environmentUrl": {
+			"value": "https://test.salesforce.com"
+		},
+		"SalesforceLinkedService_properties_typeProperties_clientId": {
+			"value": "Ioan"
 		}
 	}
 }

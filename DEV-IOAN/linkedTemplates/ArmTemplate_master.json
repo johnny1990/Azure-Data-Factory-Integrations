@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage2'"
 		},
+		"AzureBlobStorage_retailcontainer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage_retailcontainer'"
+		},
 		"AzureSqlDatabase1_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
@@ -27,6 +31,30 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'BLOBService'"
 		},
+		"JiraLinkedService_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'JiraLinkedService'"
+		},
+		"SalesforceLinkedService_clientSecret": {
+			"type": "secureString",
+			"metadata": "Secure string for 'clientSecret' of 'SalesforceLinkedService'"
+		},
+		"AzureSqlDestination_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDestination'"
+		},
+		"StorageSource_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'StorageSource'"
+		},
+		"JiraLinkedService_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "https://id.atlassian.com/login"
+		},
+		"JiraLinkedService_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "manioan90@gmail.com"
+		},
 		"MarketStackApi_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "http://api.marketstack.com/v1/"
@@ -38,6 +66,14 @@
 		"RestServiceUsers_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://jsonplaceholder.typicode.com/users"
+		},
+		"SalesforceLinkedService_properties_typeProperties_environmentUrl": {
+			"type": "string",
+			"defaultValue": "https://test.salesforce.com"
+		},
+		"SalesforceLinkedService_properties_typeProperties_clientId": {
+			"type": "string",
+			"defaultValue": "Ioan"
 		},
 		"containerUri": {
 			"type": "string",
@@ -72,6 +108,9 @@
 					"AzureBlobStorage2_connectionString": {
 						"value": "[parameters('AzureBlobStorage2_connectionString')]"
 					},
+					"AzureBlobStorage_retailcontainer_connectionString": {
+						"value": "[parameters('AzureBlobStorage_retailcontainer_connectionString')]"
+					},
 					"AzureSqlDatabase1_connectionString": {
 						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
 					},
@@ -81,6 +120,24 @@
 					"BLOBService_connectionString": {
 						"value": "[parameters('BLOBService_connectionString')]"
 					},
+					"JiraLinkedService_password": {
+						"value": "[parameters('JiraLinkedService_password')]"
+					},
+					"SalesforceLinkedService_clientSecret": {
+						"value": "[parameters('SalesforceLinkedService_clientSecret')]"
+					},
+					"AzureSqlDestination_connectionString": {
+						"value": "[parameters('AzureSqlDestination_connectionString')]"
+					},
+					"StorageSource_connectionString": {
+						"value": "[parameters('StorageSource_connectionString')]"
+					},
+					"JiraLinkedService_properties_typeProperties_host": {
+						"value": "[parameters('JiraLinkedService_properties_typeProperties_host')]"
+					},
+					"JiraLinkedService_properties_typeProperties_username": {
+						"value": "[parameters('JiraLinkedService_properties_typeProperties_username')]"
+					},
 					"MarketStackApi_properties_typeProperties_url": {
 						"value": "[parameters('MarketStackApi_properties_typeProperties_url')]"
 					},
@@ -89,6 +146,12 @@
 					},
 					"RestServiceUsers_properties_typeProperties_url": {
 						"value": "[parameters('RestServiceUsers_properties_typeProperties_url')]"
+					},
+					"SalesforceLinkedService_properties_typeProperties_environmentUrl": {
+						"value": "[parameters('SalesforceLinkedService_properties_typeProperties_environmentUrl')]"
+					},
+					"SalesforceLinkedService_properties_typeProperties_clientId": {
+						"value": "[parameters('SalesforceLinkedService_properties_typeProperties_clientId')]"
 					}
 				}
 			},
@@ -132,6 +195,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'DEV-IOAN_ArmTemplate_1')]"
+			]
+		},
+		{
+			"name": "DEV-IOAN_ArmTemplate_3",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'DEV-IOAN_ArmTemplate_2')]"
 			]
 		}
 	]
