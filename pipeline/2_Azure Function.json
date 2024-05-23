@@ -15,6 +15,38 @@
 					"variableName": "func",
 					"value": "test"
 				}
+			},
+			{
+				"name": "Call Azure Function",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [
+					{
+						"activity": "Set input for function",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": "Get Time Function",
+					"body": {
+						"value": "@variables('func')",
+						"type": "Expression"
+					},
+					"method": "POST"
+				},
+				"linkedServiceName": {
+					"referenceName": "GetTimeAzureFunction",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"variables": {
