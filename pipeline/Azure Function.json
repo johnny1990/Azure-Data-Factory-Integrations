@@ -53,10 +53,8 @@
 				}
 			},
 			{
-				"name": "WebHook1",
+				"name": "WebHook",
 				"type": "WebHook",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Call Azure Function",
@@ -73,6 +71,12 @@
 				"typeProperties": {
 					"url": "https://bd-eus2-fapp.azurewebsites.net/api/Get",
 					"method": "POST",
+					"headers": {
+						"Content-Type": {
+							"value": "application/json",
+							"type": "Expression"
+						}
+					},
 					"body": "{\ntimezone: 'Eastern Standard Time'\n}",
 					"timeout": "00:09:00"
 				}
