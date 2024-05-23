@@ -1,0 +1,86 @@
+{
+	"name": "Azure Function",
+	"properties": {
+		"activities": [
+			{
+				"name": "Web Activity",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": "https://bd-eus2-fapp.azurewebsites.net/api/Get",
+					"body": "{\ntimezone: \"Eastern Standard Time\"\n}"
+				}
+			},
+			{
+				"name": "Call Azure Function",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [
+					{
+						"activity": "Web Activity",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": {
+						"value": "Get Time Function",
+						"type": "Expression"
+					},
+					"body": "{\ntimezone: \"Eastern Standard Time\"\n}",
+					"method": "POST"
+				},
+				"linkedServiceName": {
+					"referenceName": "GetTimeAzureFunction",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "WebHook1",
+				"type": "WebHook",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "Call Azure Function",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://bd-eus2-fapp.azurewebsites.net/api/Get",
+					"method": "POST",
+					"body": "{\ntimezone: 'Eastern Standard Time'\n}",
+					"timeout": "00:09:00"
+				}
+			}
+		],
+		"folder": {
+			"name": "Azure Function in ADF"
+		},
+		"annotations": []
+	}
+}
