@@ -1,0 +1,11 @@
+{
+	"name": "GetTimeAzureFunction",
+	"properties": {
+		"annotations": [],
+		"type": "AzureFunction",
+		"typeProperties": {
+			"functionAppUrl": "https://lsaffgettime.azurewebsites.net",
+			"authentication": "Anonymous"
+		}
+	}
+}
