@@ -47,6 +47,64 @@
 					"referenceName": "GetTimeAzureFunction",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "Check Status",
+				"type": "Until",
+				"dependsOn": [
+					{
+						"activity": "Call Azure Function",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@activity('Call Azure Function').output",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Wait",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 5
+							}
+						},
+						{
+							"name": "Get Function Status",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "Wait ",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"method": "GET",
+								"url": {
+									"value": "@activity('Call Azure Function').output.statusQueryGetUri",
+									"type": "Expression"
+								}
+							}
+						}
+					],
+					"timeout": "0.12:00:00"
+				}
 			}
 		],
 		"variables": {
