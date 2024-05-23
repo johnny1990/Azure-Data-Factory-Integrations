@@ -1296,7 +1296,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Azure Function')]",
+			"name": "[concat(parameters('factoryName'), '/1_Azure Function')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1387,6 +1387,12 @@
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"func": {
+						"type": "String",
+						"defaultValue": "test"
+					}
 				},
 				"folder": {
 					"name": "Azure Function in ADF"
@@ -4739,6 +4745,59 @@
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]",
 				"[concat(variables('factoryId'), '/linkedServices/BLOBService')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/2_Azure Function')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set input for function",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "func",
+							"value": "test"
+						}
+					},
+					{
+						"name": "Azure Function1",
+						"type": "AzureFunctionActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"headers": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"func": {
+						"type": "String",
+						"defaultValue": "test"
+					}
+				},
+				"folder": {
+					"name": "Azure Function in ADF"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
 		}
 	]
 }
