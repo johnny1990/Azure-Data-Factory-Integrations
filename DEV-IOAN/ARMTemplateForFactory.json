@@ -1392,6 +1392,10 @@
 					"func": {
 						"type": "String",
 						"defaultValue": "test"
+					},
+					"func_o": {
+						"type": "String",
+						"defaultValue": "t"
 					}
 				},
 				"folder": {
@@ -4767,9 +4771,16 @@
 						}
 					},
 					{
-						"name": "Azure Function1",
+						"name": "Call Azure Function",
 						"type": "AzureFunctionActivity",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Set input for function",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -4779,7 +4790,97 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"headers": {}
+							"functionName": "Get Time Function",
+							"body": {
+								"value": "@variables('func')",
+								"type": "Expression"
+							},
+							"headers": {},
+							"method": "POST"
+						},
+						"linkedServiceName": {
+							"referenceName": "GetTimeAzureFunction",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Check Status",
+						"type": "Until",
+						"dependsOn": [
+							{
+								"activity": "Call Azure Function",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@activity('Call Azure Function').output",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Wait",
+									"type": "Wait",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"waitTimeInSeconds": 5
+									}
+								},
+								{
+									"name": "Get Function Status",
+									"type": "WebActivity",
+									"dependsOn": [
+										{
+											"activity": "Wait ",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"method": "GET",
+										"headers": {},
+										"url": {
+											"value": "@activity('Call Azure Function').output.statusQueryGetUri",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"timeout": "0.12:00:00"
+						}
+					},
+					{
+						"name": "Set output for function",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Check Status",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "func_o",
+							"value": "ok"
 						}
 					}
 				],
@@ -4790,6 +4891,10 @@
 					"func": {
 						"type": "String",
 						"defaultValue": "test"
+					},
+					"func_o": {
+						"type": "String",
+						"defaultValue": "t"
 					}
 				},
 				"folder": {
@@ -4797,7 +4902,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/GetTimeAzureFunction')]"
+			]
 		}
 	]
 }
