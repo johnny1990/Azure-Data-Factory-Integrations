@@ -105,12 +105,37 @@
 					],
 					"timeout": "0.12:00:00"
 				}
+			},
+			{
+				"name": "Set output for function",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Check Status",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "func_o",
+					"value": "ok"
+				}
 			}
 		],
 		"variables": {
 			"func": {
 				"type": "String",
 				"defaultValue": "test"
+			},
+			"func_o": {
+				"type": "String",
+				"defaultValue": "t"
 			}
 		},
 		"folder": {
