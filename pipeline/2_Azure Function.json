@@ -1,0 +1,31 @@
+{
+	"name": "2_Azure Function",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set input for function",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "func",
+					"value": ""
+				}
+			}
+		],
+		"variables": {
+			"func": {
+				"type": "String",
+				"defaultValue": "test"
+			}
+		},
+		"folder": {
+			"name": "Azure Function in ADF"
+		},
+		"annotations": []
+	}
+}
