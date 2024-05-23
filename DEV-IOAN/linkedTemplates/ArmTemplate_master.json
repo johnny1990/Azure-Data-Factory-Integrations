@@ -27,9 +27,17 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase2'"
 		},
+		"AzureSqlDestination_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDestination'"
+		},
 		"BLOBService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'BLOBService'"
+		},
+		"GetTimeAzureFunction_functionKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'functionKey' of 'GetTimeAzureFunction'"
 		},
 		"JiraLinkedService_password": {
 			"type": "secureString",
@@ -39,13 +47,13 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'clientSecret' of 'SalesforceLinkedService'"
 		},
-		"AzureSqlDestination_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSqlDestination'"
-		},
 		"StorageSource_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'StorageSource'"
+		},
+		"GetTimeAzureFunction_properties_typeProperties_functionAppUrl": {
+			"type": "string",
+			"defaultValue": "https://lsaffgettime.azurewebsites.net"
 		},
 		"JiraLinkedService_properties_typeProperties_host": {
 			"type": "string",
@@ -117,8 +125,14 @@
 					"AzureSqlDatabase2_connectionString": {
 						"value": "[parameters('AzureSqlDatabase2_connectionString')]"
 					},
+					"AzureSqlDestination_connectionString": {
+						"value": "[parameters('AzureSqlDestination_connectionString')]"
+					},
 					"BLOBService_connectionString": {
 						"value": "[parameters('BLOBService_connectionString')]"
+					},
+					"GetTimeAzureFunction_functionKey": {
+						"value": "[parameters('GetTimeAzureFunction_functionKey')]"
 					},
 					"JiraLinkedService_password": {
 						"value": "[parameters('JiraLinkedService_password')]"
@@ -126,11 +140,11 @@
 					"SalesforceLinkedService_clientSecret": {
 						"value": "[parameters('SalesforceLinkedService_clientSecret')]"
 					},
-					"AzureSqlDestination_connectionString": {
-						"value": "[parameters('AzureSqlDestination_connectionString')]"
-					},
 					"StorageSource_connectionString": {
 						"value": "[parameters('StorageSource_connectionString')]"
+					},
+					"GetTimeAzureFunction_properties_typeProperties_functionAppUrl": {
+						"value": "[parameters('GetTimeAzureFunction_properties_typeProperties_functionAppUrl')]"
 					},
 					"JiraLinkedService_properties_typeProperties_host": {
 						"value": "[parameters('JiraLinkedService_properties_typeProperties_host')]"

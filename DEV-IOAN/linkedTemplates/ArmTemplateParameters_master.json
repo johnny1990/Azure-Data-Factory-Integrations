@@ -20,7 +20,13 @@
 		"AzureSqlDatabase2_connectionString": {
 			"value": ""
 		},
+		"AzureSqlDestination_connectionString": {
+			"value": ""
+		},
 		"BLOBService_connectionString": {
+			"value": ""
+		},
+		"GetTimeAzureFunction_functionKey": {
 			"value": ""
 		},
 		"JiraLinkedService_password": {
@@ -29,11 +35,11 @@
 		"SalesforceLinkedService_clientSecret": {
 			"value": ""
 		},
-		"AzureSqlDestination_connectionString": {
-			"value": ""
-		},
 		"StorageSource_connectionString": {
 			"value": ""
+		},
+		"GetTimeAzureFunction_properties_typeProperties_functionAppUrl": {
+			"value": "https://lsaffgettime.azurewebsites.net"
 		},
 		"JiraLinkedService_properties_typeProperties_host": {
 			"value": "https://id.atlassian.com/login"
