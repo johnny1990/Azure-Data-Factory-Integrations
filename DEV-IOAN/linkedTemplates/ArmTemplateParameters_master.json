@@ -38,6 +38,9 @@
 		"StorageSource_connectionString": {
 			"value": ""
 		},
+		"AmazonS3Test_secretAccessKey": {
+			"value": ""
+		},
 		"GetTimeAzureFunction_properties_typeProperties_functionAppUrl": {
 			"value": "https://lsaffgettime.azurewebsites.net"
 		},
@@ -61,6 +64,9 @@
 		},
 		"SalesforceLinkedService_properties_typeProperties_clientId": {
 			"value": "Ioan"
+		},
+		"AmazonS3Test_properties_typeProperties_accessKeyId": {
+			"value": "AKIA3X3OBRIRLU5NSKN4"
 		},
 		"containerUri": {
 			"value": ""

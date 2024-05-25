@@ -51,6 +51,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'StorageSource'"
 		},
+		"AmazonS3Test_secretAccessKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'secretAccessKey' of 'AmazonS3Test'"
+		},
 		"GetTimeAzureFunction_properties_typeProperties_functionAppUrl": {
 			"type": "string",
 			"defaultValue": "https://lsaffgettime.azurewebsites.net"
@@ -82,12 +86,118 @@
 		"SalesforceLinkedService_properties_typeProperties_clientId": {
 			"type": "string",
 			"defaultValue": "Ioan"
+		},
+		"AmazonS3Test_properties_typeProperties_accessKeyId": {
+			"type": "string",
+			"defaultValue": "AKIA3X3OBRIRLU5NSKN4"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/1_Azure Function')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Web Activity",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {},
+							"url": "https://bd-eus2-fapp.azurewebsites.net/api/Get",
+							"body": "{\ntimezone: \"Eastern Standard Time\"\n}"
+						}
+					},
+					{
+						"name": "Call Azure Function",
+						"type": "AzureFunctionActivity",
+						"dependsOn": [
+							{
+								"activity": "Web Activity",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"functionName": {
+								"value": "Get Time Function",
+								"type": "Expression"
+							},
+							"body": "{\ntimezone: \"Eastern Standard Time\"\n}",
+							"headers": {},
+							"method": "POST"
+						},
+						"linkedServiceName": {
+							"referenceName": "GetTimeAzureFunction",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "WebHook",
+						"type": "WebHook",
+						"dependsOn": [
+							{
+								"activity": "Call Azure Function",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://bd-eus2-fapp.azurewebsites.net/api/Get",
+							"method": "POST",
+							"headers": {
+								"Content-Type": {
+									"value": "application/json",
+									"type": "Expression"
+								}
+							},
+							"body": {
+								"timezone": "Eastern Standard Time"
+							},
+							"timeout": "00:09:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Azure Function in ADF"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/GetTimeAzureFunction')]"
+			]
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/1_Products')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -344,6 +454,155 @@
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable3')]",
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable4')]",
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable11')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/2_Azure Function')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set input for function",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "func",
+							"value": "test"
+						}
+					},
+					{
+						"name": "Call Azure Function",
+						"type": "AzureFunctionActivity",
+						"dependsOn": [
+							{
+								"activity": "Set input for function",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"functionName": "Get Time Function",
+							"body": {
+								"value": "@variables('func')",
+								"type": "Expression"
+							},
+							"headers": {},
+							"method": "POST"
+						},
+						"linkedServiceName": {
+							"referenceName": "GetTimeAzureFunction",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Check Status",
+						"type": "Until",
+						"dependsOn": [
+							{
+								"activity": "Call Azure Function",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@activity('Call Azure Function').output",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Wait",
+									"type": "Wait",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"waitTimeInSeconds": 5
+									}
+								},
+								{
+									"name": "Get Function Status",
+									"type": "WebActivity",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"method": "GET",
+										"headers": {},
+										"url": {
+											"value": "@activity('Call Azure Function').output.statusQueryGetUri",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"timeout": "0.12:00:00"
+						}
+					},
+					{
+						"name": "Set output for function",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Check Status",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "func_o",
+							"value": "ok"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"func": {
+						"type": "String",
+						"defaultValue": "test"
+					},
+					"func_o": {
+						"type": "String",
+						"defaultValue": "t"
+					}
+				},
+				"folder": {
+					"name": "Azure Function in ADF"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/GetTimeAzureFunction')]"
 			]
 		},
 		{
@@ -1296,118 +1555,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/1_Azure Function')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Web Activity",
-						"type": "WebActivity",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"method": "POST",
-							"headers": {},
-							"url": "https://bd-eus2-fapp.azurewebsites.net/api/Get",
-							"body": "{\ntimezone: \"Eastern Standard Time\"\n}"
-						}
-					},
-					{
-						"name": "Call Azure Function",
-						"type": "AzureFunctionActivity",
-						"dependsOn": [
-							{
-								"activity": "Web Activity",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"functionName": {
-								"value": "Get Time Function",
-								"type": "Expression"
-							},
-							"body": "{\ntimezone: \"Eastern Standard Time\"\n}",
-							"headers": {},
-							"method": "POST"
-						},
-						"linkedServiceName": {
-							"referenceName": "GetTimeAzureFunction",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "WebHook",
-						"type": "WebHook",
-						"dependsOn": [
-							{
-								"activity": "Call Azure Function",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://bd-eus2-fapp.azurewebsites.net/api/Get",
-							"method": "POST",
-							"headers": {
-								"Content-Type": {
-									"value": "application/json",
-									"type": "Expression"
-								}
-							},
-							"body": {
-								"timezone": "Eastern Standard Time"
-							},
-							"timeout": "00:09:00"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"variables": {
-					"func": {
-						"type": "String",
-						"defaultValue": "test"
-					},
-					"func_o": {
-						"type": "String",
-						"defaultValue": "t"
-					}
-				},
-				"folder": {
-					"name": "Azure Function in ADF"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/GetTimeAzureFunction')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/Csv_By_Sql')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1950,6 +2097,83 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Main')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Execute Pipeline1",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "1_Azure Function",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "Wait",
+						"type": "Wait",
+						"dependsOn": [
+							{
+								"activity": "Execute Pipeline1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 5
+						}
+					},
+					{
+						"name": "Execute Pipeline2",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Wait",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "2_Azure Function",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Azure Function in ADF"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/1_Azure Function')]",
+				"[concat(variables('factoryId'), '/pipelines/2_Azure Function')]"
 			]
 		},
 		{
@@ -4751,36 +4975,15 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/2_Azure Function')]",
+			"name": "[concat(parameters('factoryName'), '/TestCopyMultipleFilesToBlob')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Set input for function",
-						"type": "SetVariable",
+						"name": "Get Metadata1",
+						"type": "GetMetadata",
 						"dependsOn": [],
-						"policy": {
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "func",
-							"value": "test"
-						}
-					},
-					{
-						"name": "Call Azure Function",
-						"type": "AzureFunctionActivity",
-						"dependsOn": [
-							{
-								"activity": "Set input for function",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -4790,25 +4993,29 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"functionName": "Get Time Function",
-							"body": {
-								"value": "@variables('func')",
-								"type": "Expression"
+							"dataset": {
+								"referenceName": "Binary_Demo_Service",
+								"type": "DatasetReference",
+								"parameters": {}
 							},
-							"headers": {},
-							"method": "POST"
-						},
-						"linkedServiceName": {
-							"referenceName": "GetTimeAzureFunction",
-							"type": "LinkedServiceReference"
+							"fieldList": [
+								"exists"
+							],
+							"storeSettings": {
+								"type": "AmazonS3ReadSettings",
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "BinaryReadSettings"
+							}
 						}
 					},
 					{
-						"name": "Check Status",
-						"type": "Until",
+						"name": "ForEach1",
+						"type": "ForEach",
 						"dependsOn": [
 							{
-								"activity": "Call Azure Function",
+								"activity": "Get Metadata1",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -4816,31 +5023,15 @@
 						],
 						"userProperties": [],
 						"typeProperties": {
-							"expression": {
-								"value": "@activity('Call Azure Function').output",
+							"items": {
+								"value": "@activity('Get Metadata1').output.childitems",
 								"type": "Expression"
 							},
 							"activities": [
 								{
-									"name": "Wait",
-									"type": "Wait",
+									"name": "Copy data1",
+									"type": "Copy",
 									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"waitTimeInSeconds": 5
-									}
-								},
-								{
-									"name": "Get Function Status",
-									"type": "WebActivity",
-									"dependsOn": [
-										{
-											"activity": "Wait ",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
 									"policy": {
 										"timeout": "0.12:00:00",
 										"retry": 0,
@@ -4850,60 +5041,158 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"method": "GET",
-										"headers": {},
-										"url": {
-											"value": "@activity('Call Azure Function').output.statusQueryGetUri",
-											"type": "Expression"
+										"source": {
+											"type": "BinarySource",
+											"storeSettings": {
+												"type": "AmazonS3ReadSettings",
+												"recursive": true
+											},
+											"formatSettings": {
+												"type": "BinaryReadSettings"
+											}
+										},
+										"sink": {
+											"type": "BinarySink",
+											"storeSettings": {
+												"type": "AzureBlobStorageWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "Binary12",
+											"type": "DatasetReference",
+											"parameters": {
+												"FileName": {
+													"value": "@item().FileName",
+													"type": "Expression"
+												}
+											}
 										}
-									}
+									],
+									"outputs": [
+										{
+											"referenceName": "Binary13",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
 								}
-							],
-							"timeout": "0.12:00:00"
-						}
-					},
-					{
-						"name": "Set output for function",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Check Status",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "func_o",
-							"value": "ok"
+							]
 						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
-				"variables": {
-					"func": {
-						"type": "String",
-						"defaultValue": "test"
-					},
-					"func_o": {
-						"type": "String",
-						"defaultValue": "t"
-					}
-				},
 				"folder": {
-					"name": "Azure Function in ADF"
+					"name": "Tutorials"
 				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/GetTimeAzureFunction')]"
+				"[concat(variables('factoryId'), '/datasets/Binary_Demo_Service')]",
+				"[concat(variables('factoryId'), '/datasets/Binary12')]",
+				"[concat(variables('factoryId'), '/datasets/Binary13')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AmazonS3Test')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AmazonS3",
+				"typeProperties": {
+					"serviceUrl": "https://s3.amazonaws.com",
+					"accessKeyId": "[parameters('AmazonS3Test_properties_typeProperties_accessKeyId')]",
+					"secretAccessKey": {
+						"type": "SecureString",
+						"value": "[parameters('AmazonS3Test_secretAccessKey')]"
+					},
+					"authenticationType": "AccessKey"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Binary_Demo_Service')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AmazonS3Test",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AmazonS3Location",
+						"bucketName": "test",
+						"folderPath": "Ioan",
+						"fileName": "File"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AmazonS3Test')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Binary12')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AmazonS3Test",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AmazonS3Location",
+						"bucketName": "testb",
+						"folderPath": "Ioan",
+						"fileName": {
+							"value": "@dataset().FileName",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AmazonS3Test')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Binary13')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "GoogleUsers.csv",
+						"container": "employeedata"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
 			]
 		}
 	]

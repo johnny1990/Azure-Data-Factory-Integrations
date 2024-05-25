@@ -51,6 +51,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'StorageSource'"
 		},
+		"AmazonS3Test_secretAccessKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'secretAccessKey' of 'AmazonS3Test'"
+		},
 		"GetTimeAzureFunction_properties_typeProperties_functionAppUrl": {
 			"type": "string",
 			"defaultValue": "https://lsaffgettime.azurewebsites.net"
@@ -82,6 +86,10 @@
 		"SalesforceLinkedService_properties_typeProperties_clientId": {
 			"type": "string",
 			"defaultValue": "Ioan"
+		},
+		"AmazonS3Test_properties_typeProperties_accessKeyId": {
+			"type": "string",
+			"defaultValue": "AKIA3X3OBRIRLU5NSKN4"
 		},
 		"containerUri": {
 			"type": "string",
@@ -143,6 +151,9 @@
 					"StorageSource_connectionString": {
 						"value": "[parameters('StorageSource_connectionString')]"
 					},
+					"AmazonS3Test_secretAccessKey": {
+						"value": "[parameters('AmazonS3Test_secretAccessKey')]"
+					},
 					"GetTimeAzureFunction_properties_typeProperties_functionAppUrl": {
 						"value": "[parameters('GetTimeAzureFunction_properties_typeProperties_functionAppUrl')]"
 					},
@@ -166,6 +177,9 @@
 					},
 					"SalesforceLinkedService_properties_typeProperties_clientId": {
 						"value": "[parameters('SalesforceLinkedService_properties_typeProperties_clientId')]"
+					},
+					"AmazonS3Test_properties_typeProperties_accessKeyId": {
+						"value": "[parameters('AmazonS3Test_properties_typeProperties_accessKeyId')]"
 					}
 				}
 			},
