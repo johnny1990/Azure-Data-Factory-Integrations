@@ -83,7 +83,13 @@
 							"inputs": [
 								{
 									"referenceName": "Binary12",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"FileName": {
+											"value": "@item().FileName",
+											"type": "Expression"
+										}
+									}
 								}
 							],
 							"outputs": [
