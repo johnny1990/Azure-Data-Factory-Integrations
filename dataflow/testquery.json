@@ -3,7 +3,18 @@
 	"properties": {
 		"type": "WranglingDataFlow",
 		"typeProperties": {
-			"sources": []
+			"sources": [
+				{
+					"name": "AzureSqlTable11",
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~>  AzureSqlTable11",
+					"dataset": {
+						"referenceName": "AzureSqlTable11",
+						"type": "DatasetReference"
+					}
+				}
+			],
+			"script": "section Section1;\r\nshared AzureSqlTable11 = let AdfDoc = Sql.Database(\"integrations-server.database.windows.net\", \"SSIS-DB\", [CreateNavigationProperties = false]), InputTable = AdfDoc{[Schema=\"dbo\",Item=\"Products\"]}[Data] in InputTable;\r\nshared UserQuery = let Source = #\"AzureSqlTable11\" in Source;\r\n",
+			"documentLocale": "en-us"
 		}
 	}
 }

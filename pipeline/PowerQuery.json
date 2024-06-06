@@ -1,0 +1,35 @@
+{
+	"name": "PowerQuery",
+	"properties": {
+		"activities": [
+			{
+				"name": "Power Query",
+				"type": "ExecuteWranglingDataflow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "testquery",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"queries": []
+				}
+			}
+		],
+		"folder": {
+			"name": "Tutorials"
+		},
+		"annotations": []
+	}
+}
