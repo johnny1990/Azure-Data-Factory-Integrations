@@ -1,0 +1,15 @@
+{
+	"name": "DynamicsEntity1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DynamicsLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DynamicsEntity",
+		"schema": [],
+		"typeProperties": {
+			"entityName": "Orders"
+		}
+	}
+}
