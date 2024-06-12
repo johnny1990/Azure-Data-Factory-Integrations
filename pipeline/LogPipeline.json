@@ -76,7 +76,10 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT '@{pipeline().DataFactory}' as DataFactory_Name,\r\n'@{pipeline().Pipeline}' as Pipeline_Name,\r\n'@{pipeline().RunId}' as RunId,\r\n'TotalSaleTable' as Source,\r\n'TotalSale CSV File' as Destination,\r\n'@{activity('CopyTotalSale').output.executionDetails[0].status}' as Execution_Status,\r\n'@{activity('CopyTotalSale').output.errors[0].Code}' as ErrorCode,\r\n'@{replace(activity('CopyTotalSale').output.errors[0].Message,'''','')}' as ErrorDescriprion,\r\n'@{utcnow()}' as ErrorLoggedTime\r\n\r\n",
+						"sqlReaderQuery": {
+							"value": "SELECT '@{pipeline().DataFactory}' as DataFactory_Name,\r\n'@{pipeline().Pipeline}' as Pipeline_Name,\r\n'@{pipeline().RunId}' as RunId,\r\n'TotalSaleTable' as Source,\r\n'TotalSale CSV File' as Destination,\r\n'@{activity('CopyTotalSale').output.executionDetails[0].status}' as Execution_Status,\r\n'@{activity('CopyTotalSale').output.errors[0].Code}' as ErrorCode,\r\n'@{replace(activity('CopyTotalSale').output.errors[0].Message,'''','')}' as ErrorDescriprion,\r\n'@{utcnow()}' as ErrorLoggedTime\r\n\r\n",
+							"type": "Expression"
+						},
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -136,7 +139,10 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT '@{pipeline().DataFactory}' as DataFactory_Name,\r\n'@{pipeline().Pipeline}' as Pipeline_Name,\r\n'@{pipeline().RunId}' as RunId,\r\n'TotalSaleTable' as Source,\r\n'TotalSale CSV File' as Destination,\r\n'@{activity('CopyTotalSale').output.rowsRead}' as RowsRead,\r\n'@{activity('CopyTotalSale').output.rowsCopied}' as RowsCopied,\r\n'@{activity('CopyTotalSale').output.copyDuration}' as copyDuration,\r\n'@{utcnow()}' as ErrorLoggedTime",
+						"sqlReaderQuery": {
+							"value": "SELECT '@{pipeline().DataFactory}' as DataFactory_Name,\n'@{pipeline().Pipeline}' as Pipeline_Name,\n'@{pipeline().RunId}' as RunId,\n'TotalSaleTable' as Source,\n'TotalSale CSV File' as Destination,\n\n\n'@{activity('CopyTotalSale').output.copyDuration}' as copyDuration,\n'@{utcnow()}' as ErrorLoggedTime",
+							"type": "Expression"
+						},
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
