@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Main Lookup",
+				"name": "MainLookup",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -25,6 +25,25 @@
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEachLoop",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "MainLookup",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('MainLookup').output.value",
+						"type": "Expression"
+					}
 				}
 			}
 		],
